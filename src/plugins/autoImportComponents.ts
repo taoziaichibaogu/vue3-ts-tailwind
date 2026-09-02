@@ -18,8 +18,7 @@ export default function autoRegisterComponents(app: App) {
       // 注册组件
       app.component(finalName, component);
     } catch (error) {
-      console.log(`cuowu:${error}`);
-      console.error(`注册组件失败 ${path}:`, error);
+      console.error('[AutoRegisterComponents] Failed to register component:', path, error);
     }
   }
 }

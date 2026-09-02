@@ -1,4 +1,5 @@
 import api from '../axios';
+import type { ApiResponse } from '../types/common';
 
 // 用户类型定义
 export interface User {
@@ -16,6 +17,13 @@ export interface UserListParams {
   keyword?: string;
 }
 
+export interface UserListData {
+  list: User[];
+  total: number;
+  page: number;
+  pageSize: number;
+}
+
 // 创建/更新用户数据类型
 export interface UserCreateData {
   name: string;
@@ -25,8 +33,8 @@ export interface UserCreateData {
 // 用户相关API封装
 export const userApi = {
   // 获取用户列表
-  listUser: (params?: UserListParams) => {
-    return api({
+  listUsers: (params?: UserListParams) => {
+    return api<ApiResponse<UserListData>>({
       url: '/users',
       method: 'get',
       params,
@@ -35,7 +43,7 @@ export const userApi = {
 
   // 获取单个用户详情
   getUser: (id: number | string) => {
-    return api({
+    return api<ApiResponse<User>>({
       url: `/users/${id}`,
       method: 'get',
     });
@@ -43,7 +51,7 @@ export const userApi = {
 
   // 添加用户
   addUser: (data: UserCreateData) => {
-    return api({
+    return api<ApiResponse<User>>({
       url: '/users',
       method: 'post',
       data,
@@ -52,7 +60,7 @@ export const userApi = {
 
   // 更新用户
   updateUser: (id: number | string, data: Partial<UserCreateData>) => {
-    return api({
+    return api<ApiResponse<User>>({
       url: `/users/${id}`,
       method: 'put',
       data,
@@ -61,9 +69,12 @@ export const userApi = {
 
   // 删除用户
   deleteUser: (id: number | string) => {
-    return api({
+    return api<ApiResponse<null>>({
       url: `/users/${id}`,
       method: 'delete',
     });
   },
 };
+
+// Backward compatibility
+export const listUser = userApi.listUsers;

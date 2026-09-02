@@ -1,1 +1,1 @@
-console.log('choa');
+export * from './text';

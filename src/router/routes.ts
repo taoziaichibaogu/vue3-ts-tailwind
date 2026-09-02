@@ -1,15 +1,31 @@
 import type { RouteRecordRaw } from 'vue-router';
-import Home from '../views/Home.vue';
+import { TEXTS } from '@/constants/text';
 
 export const routes: RouteRecordRaw[] = [
-  {
-    path: '/',
-    name: 'Home',
-    component: Home,
-  },
+  // Backward compatible path: avoid 404 when user still opens /about from history/bookmarks
   {
     path: '/about',
-    name: 'About',
-    component: () => import('../views/About.vue'),
+    redirect: { name: 'UserManagement' },
+  },
+  {
+    path: '/',
+    name: 'AdminLayout',
+    component: () => import('@/layouts/AdminLayout.vue'),
+    redirect: { name: 'UserManagement' },
+    children: [
+      {
+        path: 'system/users',
+        name: 'UserManagement',
+        component: () => import('@/views/user/UserManagement.vue'),
+        meta: {
+          title: TEXTS.menu.userManagement,
+        },
+      },
+    ],
+  },
+  // Fallback
+  {
+    path: '/:pathMatch(.*)*',
+    redirect: { name: 'UserManagement' },
   },
 ];
