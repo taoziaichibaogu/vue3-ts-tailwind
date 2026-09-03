@@ -1,19 +1,7 @@
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { reactive, ref } from 'vue';
-import { userApi, type User, type UserCreateData, type UserListData } from '@/api/system/user';
+import { userApi, type User, type UserCreateData } from '@/api/system/user';
 import { TEXTS } from '@/constants/text';
-
-interface UserListResponse {
-  code: string;
-  message: string;
-  data: UserListData;
-}
-
-interface UserResponse<T = unknown> {
-  code: string;
-  message: string;
-  data: T;
-}
 
 export function useUserManagement() {
   const loading = ref(false);
@@ -40,14 +28,14 @@ export function useUserManagement() {
   async function fetchList() {
     loading.value = true;
     try {
-      const res = (await userApi.listUsers({
+      const res = await userApi.listUsers({
         page: pagination.page,
         size: pagination.size,
         keyword: queryForm.keyword?.trim() || undefined,
-      })) as unknown as UserListResponse;
+      });
 
-      tableData.value = res?.data?.list || [];
-      total.value = res?.data?.total || 0;
+      tableData.value = res.data?.list || [];
+      total.value = res.data?.total || 0;
     } finally {
       loading.value = false;
     }
@@ -102,10 +90,10 @@ export function useUserManagement() {
     try {
       loading.value = true;
       if (dialogMode.value === 'create') {
-        await (userApi.addUser(payload) as unknown as Promise<UserResponse<User>>);
+        await userApi.addUser(payload);
         ElMessage.success(TEXTS.user.validation.created);
       } else if (editingId.value != null) {
-        await (userApi.updateUser(editingId.value, payload) as unknown as Promise<UserResponse<User>>);
+        await userApi.updateUser(editingId.value, payload);
         ElMessage.success(TEXTS.user.validation.updated);
       }
 
@@ -125,7 +113,7 @@ export function useUserManagement() {
 
     loading.value = true;
     try {
-      await (userApi.deleteUser(row.id) as unknown as Promise<UserResponse<null>>);
+      await userApi.deleteUser(row.id);
       ElMessage.success(TEXTS.user.validation.deleted);
       await fetchList();
     } finally {

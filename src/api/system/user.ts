@@ -1,4 +1,4 @@
-import api from '../axios';
+import { request } from '../axios';
 import type { ApiResponse } from '../types/common';
 
 // 用户类型定义
@@ -34,7 +34,7 @@ export interface UserCreateData {
 export const userApi = {
   // 获取用户列表
   listUsers: (params?: UserListParams) => {
-    return api<ApiResponse<UserListData>>({
+    return request<ApiResponse<UserListData>>({
       url: '/users',
       method: 'get',
       params,
@@ -43,7 +43,7 @@ export const userApi = {
 
   // 获取单个用户详情
   getUser: (id: number | string) => {
-    return api<ApiResponse<User>>({
+    return request<ApiResponse<User>>({
       url: `/users/${id}`,
       method: 'get',
     });
@@ -51,7 +51,7 @@ export const userApi = {
 
   // 添加用户
   addUser: (data: UserCreateData) => {
-    return api<ApiResponse<User>>({
+    return request<ApiResponse<User>>({
       url: '/users',
       method: 'post',
       data,
@@ -60,7 +60,7 @@ export const userApi = {
 
   // 更新用户
   updateUser: (id: number | string, data: Partial<UserCreateData>) => {
-    return api<ApiResponse<User>>({
+    return request<ApiResponse<User>>({
       url: `/users/${id}`,
       method: 'put',
       data,
@@ -69,7 +69,7 @@ export const userApi = {
 
   // 删除用户
   deleteUser: (id: number | string) => {
-    return api<ApiResponse<null>>({
+    return request<ApiResponse<null>>({
       url: `/users/${id}`,
       method: 'delete',
     });
