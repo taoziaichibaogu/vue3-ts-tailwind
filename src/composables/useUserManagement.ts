@@ -1,6 +1,6 @@
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { reactive, ref } from 'vue';
-import { userApi, type User, type UserCreateData } from '@/api/system/user';
+import { userApi, type User, type UserCreateData, type UserListParams } from '@/api/system/user';
 import { TEXTS } from '@/constants/text';
 
 export function useUserManagement() {
@@ -8,11 +8,13 @@ export function useUserManagement() {
   const tableData = ref<User[]>([]);
   const total = ref(0);
 
-  const queryForm = reactive({
+  // 使用 Pick 从通用查询参数中挑选搜索关键字字段
+  const queryForm = reactive<Pick<UserListParams, 'keyword'>>({
     keyword: '',
   });
 
-  const pagination = reactive({
+  // 使用 Required + Pick 组合，确保分页参数 page 和 size 必填
+  const pagination = reactive<Required<Pick<UserListParams, 'page' | 'size'>>>({
     page: 1,
     size: 10,
   });
@@ -104,7 +106,8 @@ export function useUserManagement() {
     }
   }
 
-  async function deleteRow(row: User) {
+  // 使用 Pick<User, 'id'> 解耦对整个 User 实体的过度依赖，仅要求传入包含 id 的对象即可
+  async function deleteRow(row: Pick<User, 'id'>) {
     await ElMessageBox.confirm(TEXTS.user.validation.deleteConfirm, TEXTS.user.validation.warning, {
       type: 'warning',
       confirmButtonText: TEXTS.user.confirm,

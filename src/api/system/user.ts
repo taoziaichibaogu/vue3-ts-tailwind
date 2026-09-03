@@ -24,11 +24,11 @@ export interface UserListData {
   pageSize: number;
 }
 
-// 创建/更新用户数据类型
-export interface UserCreateData {
-  name: string;
-  email: string;
-}
+// 创建用户表单数据类型：使用 Omit 排除服务端自增主键与时间戳，避免重复定义字段
+export type UserCreateData = Omit<User, 'id' | 'createdAt' | 'updatedAt'>;
+
+// 用户基础信息类型：使用 Pick 提取关键标识字段（常用于下拉框或简略列表）
+export type UserBaseInfo = Pick<User, 'id' | 'name'>;
 
 // 用户相关API封装
 export const userApi = {
