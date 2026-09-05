@@ -1,11 +1,13 @@
 import { request } from '../axios';
 import type { ApiResponse } from '../types/common';
+import type { UserStatus } from '@/constants/user';
 
 // 用户类型定义
 export interface User {
   id: number;
   name: string;
   email: string;
+  status?: UserStatus;
   createdAt?: string;
   updatedAt?: string;
 }
@@ -15,6 +17,7 @@ export interface UserListParams {
   page?: number;
   size?: number;
   keyword?: string;
+  status?: UserStatus;
 }
 
 export interface UserListData {
@@ -23,6 +26,15 @@ export interface UserListData {
   page: number;
   pageSize: number;
 }
+
+// 使用 [number] 索引访问类型，自动从数组类型提取列表项元素类型
+export type UserListItem = UserListData['list'][number];
+
+// 使用 Extract 提取允许表单更新的 key 名字
+export type UserUpdatableKeys = Extract<keyof User, 'name' | 'email' | 'status'>;
+
+// 使用 Exclude 过滤出服务端控制的只读 key 名字
+export type UserReadOnlyKeys = Exclude<keyof User, UserUpdatableKeys>;
 
 // 创建用户表单数据类型：使用 Omit 排除服务端自增主键与时间戳，避免重复定义字段
 export type UserCreateData = Omit<User, 'id' | 'createdAt' | 'updatedAt'>;

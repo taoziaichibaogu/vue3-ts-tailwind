@@ -3,6 +3,10 @@ import { reactive, ref } from 'vue';
 import { userApi, type User, type UserCreateData, type UserListParams } from '@/api/system/user';
 import { TEXTS } from '@/constants/text';
 
+// 1. 使用 as const + typeof [number] 定义并派生对话框模式类型
+export const DIALOG_MODES = ['create', 'edit'] as const;
+export type DialogMode = typeof DIALOG_MODES[number];
+
 export function useUserManagement() {
   const loading = ref(false);
   const tableData = ref<User[]>([]);
@@ -20,7 +24,7 @@ export function useUserManagement() {
   });
 
   const dialogVisible = ref(false);
-  const dialogMode = ref<'create' | 'edit'>('create');
+  const dialogMode = ref<DialogMode>('create');
   const editingId = ref<number | null>(null);
   const formModel = reactive<UserCreateData>({
     name: '',
@@ -106,8 +110,10 @@ export function useUserManagement() {
     }
   }
 
-  // 使用 Pick<User, 'id'> 解耦对整个 User 实体的过度依赖，仅要求传入包含 id 的对象即可
-  async function deleteRow(row: Pick<User, 'id'>) {
+  // 使用 Parameters 提取 userApi.deleteUser 函数的第一个参数类型（主键 ID 类型）
+  type DeleteIdType = Parameters<typeof userApi.deleteUser>[0];
+
+  async function deleteRow(row: { id: DeleteIdType }) {
     await ElMessageBox.confirm(TEXTS.user.validation.deleteConfirm, TEXTS.user.validation.warning, {
       type: 'warning',
       confirmButtonText: TEXTS.user.confirm,
@@ -147,3 +153,7 @@ export function useUserManagement() {
     deleteRow,
   };
 }
+
+// 2. 使用 ReturnType<T> 导出 composable 返回值类型，方便组件或 Context 强约束传递
+export type UseUserManagementReturn = ReturnType<typeof useUserManagement>;
+

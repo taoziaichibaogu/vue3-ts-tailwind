@@ -2,11 +2,15 @@
 import type { FormInstance, FormRules } from 'element-plus';
 import { computed, reactive, ref, watch } from 'vue';
 import { TEXTS } from '@/constants/text';
-import type { UserCreateData } from '@/api/system/user';
+import { userApi, type UserCreateData } from '@/api/system/user';
+import type { DialogMode } from '@/composables/useUserManagement';
+
+// 使用 Parameters 提取 userApi.addUser 的输入参数类型作为提交 Payload
+type CreatePayload = Parameters<typeof userApi.addUser>[0];
 
 interface Props {
   visible: boolean;
-  mode: 'create' | 'edit';
+  mode: DialogMode;
   model: UserCreateData;
   loading?: boolean;
 }
@@ -17,7 +21,7 @@ const props = withDefaults(defineProps<Props>(), {
 
 const emit = defineEmits<{
   (e: 'update:visible', value: boolean): void;
-  (e: 'submit', model: UserCreateData): void;
+  (e: 'submit', model: CreatePayload): void;
 }>();
 
 const formRef = ref<FormInstance>();

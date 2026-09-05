@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { TEXTS } from '@/constants/text';
 import type { User } from '@/api/system/user';
+import { USER_STATUS_MAP } from '@/constants/user';
 
 interface Props {
   data: User[];
@@ -23,6 +24,13 @@ const emit = defineEmits<{
       <el-table-column prop="id" :label="TEXTS.user.columns.id" width="90" />
       <el-table-column prop="name" :label="TEXTS.user.form.name" min-width="180" />
       <el-table-column prop="email" :label="TEXTS.user.form.email" min-width="240" />
+      <el-table-column label="状态" width="120">
+        <template #default="{ row }">
+          <el-tag :type="USER_STATUS_MAP[row.status || 'active'].type">
+            {{ USER_STATUS_MAP[row.status || 'active'].label }}
+          </el-tag>
+        </template>
+      </el-table-column>
       <el-table-column prop="createdAt" :label="TEXTS.user.columns.createdAt" min-width="220" />
       <el-table-column :label="TEXTS.user.actions" width="220" fixed="right">
         <template #default="{ row }">
