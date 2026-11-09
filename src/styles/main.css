@@ -1,5 +1,8 @@
 @import 'tailwindcss';
 
+/* 声明 dark 模式由 html 根节点的 .dark 类名控制，支持页面手动自由切换 */
+@custom-variant dark (&:where(.dark, .dark *));
+
 @import './reset.scss';
 
 /* 你的自定义主题等 */
