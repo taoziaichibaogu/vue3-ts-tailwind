@@ -6,6 +6,7 @@ import { defineConfig } from 'vite';
 // https://vitejs.dev/config/
 export default defineConfig(({ command, mode }) => {
   return {
+    base: command === 'build' ? '/vue3-ts-tailwind/' : '/',
     plugins: [vue(), tailwindcss()],
     resolve: {
       alias: {
